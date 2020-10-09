@@ -1,0 +1,37 @@
+
+<!-- saved from url=(0266)https://mp4-a.udemycdn.com/2016-11-10_08-55-57-3b4ea98e124ae6c99c5f29d926bb3aa8/original.html?ZLsCi1A1vDSnCOe9C_UvXsir4KZ7LLNA7sM4pp-Y82isEsRxQaOsf7o51aiZbMej98ZoA3fyDq28lZBrRnTIsHLWyBNaYroKY3GoF3y04PlnNXC8ZfECnqbRwerXtrdcingfXkuCl6pQ9rNEokg3tDlMY5CjA3IZ2poXx6-NvgAp -->
+<html>
+	<head>
+		<!-- <meta http-equiv="Content-Type" content="text/html; charset=windows-1252"> -->
+		<meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css?family=Lato:100,300,600" rel="stylesheet" type="text/css">
+        <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" href="/static/style.css">
+	<script src="/static/testGame.js" charset="utf-8"></script>
+        <script src="/static/table.js" charset="utf-8"></script>
+        <script src="/static/newroom.js" charset="utf-8"></script>
+	</head>
+
+	<body>
+                <div class="start-game" id = startGame>
+            		<div class="name-game"> Game four in a row</div>
+            		<p> Enter a number of rows between 4 And 20 </p>
+            		<p>Enter a sequence for a win between 3 And 19</p>
+                        <p><input class = "name-1" id ="name_1"  placeholder="Enter name user"></p>
+            		<form id="gameInput">
+                		<input type="number" id ="rows"  placeholder="Enter a row">
+                		<input type="number" id ="columns"  placeholder="Enter a column">
+                		<input type="number" id ="win"  placeholder="winning score">
+            		</form>
+            	        <p><button class="send-button"  onclick = "newRoom()">
+               	        <i class="ion-ios-checkmark-outline"></i></button></p>
+            		<p class="warnings remove" id = Row&ColumnLittle20> Rows and columns must be small or equal to 20 </p>
+            		<p class="warnings remove" id = Row&ColumnBig3> Rows and columns must be greater than 3</p>
+            		<p class="warnings remove" id = Winlittle> Win must be smaller than row and colum </p>
+            		<p class="warnings remove" id = fillcells> Must fill cells with values</p>  
+        	</div>
+
+	</body>
+	
+</html>
