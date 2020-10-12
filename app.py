@@ -4,7 +4,6 @@ from flask import request, jsonify, make_response
 import mysql.connector
 import json
 
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -54,8 +53,35 @@ def openGmae(user_id):
     adr = (user_id ,)
     cursor.execute(sql, adr) 
     myresult = cursor.fetchall()
+    activeN = not(myresult[0][6])
+    print("this")
+    sql1 = "UPDATE game SET activePlayer = %s WHERE id = %s"
+    val1 = (activeN, user_id)
+    cursor.execute(sql1, val1)
+    mydb.commit()
     res = make_response(jsonify(myresult), 200)
     return res
+
+
+@app.route('/id/<int:user_id>/SendInfo', methods=["POST"])
+def SendInfo(user_id):
+    # mydb = mysql.connector.connect(
+    #     host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
+    #     user="admin",
+    #     password="Bc1b1dc11",
+    #     database="four_in_a_row"
+    # )
+    parm = request.get_json()
+    # cursor = mydb.cursor()   
+    # sql = "SELECT * FROM game WHERE id = %s"
+    # val = (user_id,)
+    # cursor.execute(sql, val)
+    # myresult = cursor.fetchall()
+    print(parm)
+    res = make_response(jsonify(parm), 200)
+    
+    return res
+
 
 @app.route('/id/<int:user_id>/save_name2', methods=["POST"])
 def saveName2(user_id): 
@@ -71,11 +97,6 @@ def saveName2(user_id):
     val = (name2, user_id)
     cursor.execute(sql, val)
     mydb.commit()
-
-    # sql = "SELECT name2 FROM game WHERE id = %s"
-    # val = user_id
-    # cursor.execute(sql, val)
-    # result = cursor.fetchall()
     res = make_response(jsonify(name2), 200)
     return res
 
