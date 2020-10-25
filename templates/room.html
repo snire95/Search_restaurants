@@ -6,18 +6,19 @@
 		<meta charset="UTF-8">
         <link href="https://fonts.googleapis.com/css?family=Lato:100,300,600" rel="stylesheet" type="text/css">
         <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
-
 		<link rel="stylesheet" href="/static/style.css">
 		<script src="/static/testGame.js" charset="utf-8"></script>
         <script src="/static/table.js" charset="utf-8"></script>
         <script src="/static/newroom.js" charset="utf-8"></script>
+        <script src="/static/event.js" charset="utf-8"></script>
 	</head>
-
 	<body>
 
         <div class= "remove" id = "play">
             <p><button class="new-game" onclick = "location.reload()"><i class="ion-ios-plus-outline"></i>New game</button></p>
-	   <div class="show-player">
+            <p><button class="send-button"  onclick = "newTab()">New Tab</button></p>
+
+	        <div class="show-player">
                 <div class="wrapper-1 active"> 
                     <div class="player-1">
                         <div class="player-name" id="name-1">Player 1</div>
@@ -31,17 +32,12 @@
                             <button class="send-button"  onclick = "saveName2()">send name</button>
                         </div>
                         <div id = "div-name-2" class="remove">
-                            <div class="player-name" id="name-2">Player2</div>
+                            <div class="player-name" id="name-2">Waiting for player</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- <script src="app.js"></script> -->
- 
 		<script src="/static/app.js" charset="utf-8"></script>
-
-
 	</body>
-	
 </html>

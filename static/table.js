@@ -46,9 +46,9 @@ addTR = (numTr , numTd) => {
 }
 
 colorPlayer = (activePlayer) => {
-    if(activePlayer){
+    if(activePlayer == 2){
         return "blue" ; 
-    } else {
+    } else if(activePlayer == 1) {
         return "red";
     }
 } 

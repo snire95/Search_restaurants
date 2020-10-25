@@ -1,7 +1,6 @@
 //       לא צריך לבדוק  ********************
 testGame = (td, tr, Parameters) => {
     var victorySequence= [];
-    
     arrtestingDirection = [1, 1, -1, -1, -1, 1, 1, -1, 0, 1, 0, -1, 1, 0, -1, 0];
     for (let i = 0; i < 16; i = i + 4) {
         victorySequence[0] = [td, tr];
@@ -12,13 +11,13 @@ testGame = (td, tr, Parameters) => {
     } 
 }
 
-nameWin = (activePlayer) =>{
-    var Player = 1;
-    if (activePlayer == true) {
-        Player = 2;
-    };
-    return Player;
-}
+// nameWin = (activePlayer) =>{
+//     var Player = 1;
+//     if (activePlayer == true) {
+//         Player = 2;
+//     };
+//     return Player;
+// }
   
 testCondition = (testingDirection1, testingDirection2, Parameters,victorySequence, td, tr) => {
     let condition = true , condition1 = true ;
@@ -49,8 +48,8 @@ showVictory = (Parameters,victoryArray) => {
     if (victoryArray.length >= Parameters.victoryScore) {
         console.log(Parameters.arrGame);
         Parameters.victory = false;
-        winPlayer = nameWin(Parameters.activePlayer);
-        document.querySelector('#name-' + winPlayer).textContent = 'winner!';
+        // winPlayer = nameWin(Parameters.activePlayer);
+        document.querySelector('#name-' + Parameters.Player).textContent = 'winner!';
         for( var j = 0 ; j <victoryArray.length ; j++){
             document.getElementById("tr" + (victoryArray[j][1]) + "td" + (victoryArray[j][0])).style.borderColor = "yellow";  
         }

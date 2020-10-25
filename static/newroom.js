@@ -5,7 +5,7 @@ newRoom = () => {
         victoryScore : document.querySelector('#win').value,
         name1 :  document.querySelector('#name_1').value,
         victory: true,
-        activePlayer : false,
+        Player : 1,
         LastModifiedMounter : 0, 
     };
     if(testErr(Parameter)){
@@ -47,6 +47,10 @@ ViewName2 = () => {
 }
 
 
+newTab = () => {
+    console.log(`${window.location.href}`)
+    window.open(`${location.href}`) 
+}
 
 
 
