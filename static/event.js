@@ -30,21 +30,31 @@ playerColorChangeMouseover = (tr, td, color, row,victory, Player, active) => {
     }  
 }
 
-dotColor = ( td, tr, Parameters) => {
-    console.log("Parameter.Player  " + Parameters.Player )
-    console.log("Parameter.active  " + Parameters.active )
-    if (Parameters.victory && td < Parameters.rows && Parameters.Player == Parameters.active) {
-        playerColorChange(td, tr,Parameters);
-        testGame(td, tr, Parameters);
-        if ((td + 1) == Parameters.rows) {
-            Parameters.LastModifiedMounter++;
+ViewName = (name) => {
+    if(name == ""){
+        document.querySelector('#name-2').textContent = "Palyer-2";
+    }else{
+        document.querySelector('#name-2').textContent = name;
+    }
+    document.getElementById("div-input-name-2").classList.add('remove');
+    document.getElementById("div-name-2").classList.remove('remove');  
+
+}
+
+dotColor = ( td, tr, Parameter) => {
+    if (Parameter.victory && td < Parameter.rows && Parameter.Player == Parameter.active) {
+        playerColorChange(td, tr,Parameter);
+        testGame(td, tr, Parameter);
+        if ((td + 1) == Parameter.rows) {
+            Parameter.LastModifiedMounter++;
         };
-        sendInfo(Parameters, tr, td);
-        let deadlock = stalemate(Parameters.LastModifiedMounter, Parameters.columns, Parameters.rows);
-        if(Parameters.victor || deadlock ){
-            Parameters.active = nextPlayer(Parameters.victory , Parameters.Player);  
+        sendInfo(Parameter, tr, td);
+        let deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns, Parameter.rows);
+        if(Parameter.victor || deadlock ){
+            Parameter.active = nextPlayer(Parameter.victory , Parameter.Player);  
+            BoardUpdate(Parameter); 
         } 
-        BoardUpdate(Parameters); 
+        
     }       
 } 
 

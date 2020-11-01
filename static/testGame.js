@@ -1,12 +1,12 @@
 //       לא צריך לבדוק  ********************
-testGame = (td, tr, Parameters) => {
+testGame = (td, tr, Parameter) => {
     var victorySequence= [];
     arrtestingDirection = [1, 1, -1, -1, -1, 1, 1, -1, 0, 1, 0, -1, 1, 0, -1, 0];
     for (let i = 0; i < 16; i = i + 4) {
         victorySequence[0] = [td, tr];
-        victorySequence = testCondition(arrtestingDirection[i], arrtestingDirection[i + 1], Parameters,victorySequence, td, tr);
-        victorySequence = testCondition(arrtestingDirection[i + 2], arrtestingDirection[i + 3], Parameters,victorySequence, td, tr);
-        showVictory(Parameters,victorySequence);
+        victorySequence = testCondition(arrtestingDirection[i], arrtestingDirection[i + 1], Parameter,victorySequence, td, tr);
+        victorySequence = testCondition(arrtestingDirection[i + 2], arrtestingDirection[i + 3], Parameter,victorySequence, td, tr);
+        showVictory(Parameter,victorySequence);
         victorySequence.length = 0    
     } 
 }
@@ -19,7 +19,10 @@ testGame = (td, tr, Parameters) => {
 //     return Player;
 // }
   
-testCondition = (testingDirection1, testingDirection2, Parameters,victorySequence, td, tr) => {
+testCondition = (testingDirection1, testingDirection2, Parameters, victorySequence, td, tr) => {
+    console.log("testingDirection1 : " + testingDirection1)
+    console.log("testingDirection2 : " + testingDirection2)
+    console.log(Parameters)
     let condition = true , condition1 = true ;
     for (let i = 1; i <= (Parameters.victoryScore + 1); i++) {
         if (testingDirection1 == 1) {
@@ -33,6 +36,9 @@ testCondition = (testingDirection1, testingDirection2, Parameters,victorySequenc
             condition1 = (tr - i) >= 0;
         } 
         if (condition && condition1) {
+            console.log(Parameters)
+            console.log(td + (i * testingDirection1))
+            console.log(tr + (i * testingDirection2))
             if (Parameters.arrGame[td + (i * testingDirection1)][tr + (i * testingDirection2)] == Parameters.color) {
                 victorySequence.push([(td + (i * testingDirection1)), (tr + (i * testingDirection2))]);
             }else {
@@ -46,10 +52,9 @@ testCondition = (testingDirection1, testingDirection2, Parameters,victorySequenc
 
 showVictory = (Parameters,victoryArray) => {
     if (victoryArray.length >= Parameters.victoryScore) {
-        console.log(Parameters.arrGame);
         Parameters.victory = false;
         // winPlayer = nameWin(Parameters.activePlayer);
-        document.querySelector('#name-' + Parameters.Player).textContent = 'winner!';
+        document.querySelector('#name-' + Parameters.active).textContent = 'winner!';
         for( var j = 0 ; j <victoryArray.length ; j++){
             document.getElementById("tr" + (victoryArray[j][1]) + "td" + (victoryArray[j][0])).style.borderColor = "yellow";  
         }

@@ -4,9 +4,15 @@ from flask import request, jsonify, make_response
 import mysql.connector
 import json
 import datetime
+import time
 
 app = Flask(__name__)
-
+mydb = mysql.connector.connect(
+    host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
+    user="admin",
+    password="Bc1b1dc11",
+    database="four_in_a_row"
+)
 @app.route('/')
 def home():
 
@@ -14,12 +20,6 @@ def home():
 
 @app.route('/newRoom', methods=["POST"])
 def saveName1(): 
-    mydb = mysql.connector.connect(
-        host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
-        user="admin",
-        password="Bc1b1dc11",
-        database="four_in_a_row"
-    )
     Parameters = request.get_json()
     cursor = mydb.cursor()
     sql = "INSERT INTO game (columnsG, rowsG, victoryScore, LastModifiedMounter, activePlayer, victory, name1) VALUES (%s, %s, %s, %s, %s, %s, %s)"
@@ -41,12 +41,6 @@ def openGmaeID(user_id):
 
 @app.route("/id/<int:user_id>/creatTable")
 def openGmae(user_id):
-    mydb = mysql.connector.connect(
-        host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
-        user="admin",
-        password="Bc1b1dc11",
-        database="four_in_a_row"
-    )
     cursor = mydb.cursor()
     sql = "SELECT * FROM game WHERE id = %s"
     adr = (user_id ,)
@@ -63,23 +57,16 @@ def openGmae(user_id):
 
 @app.route('/id/<int:user_id>/SendInfo', methods=["POST"])
 def SendInfo(user_id):
-    mydb = mysql.connector.connect(
-        host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
-        user="admin",
-        password="Bc1b1dc11",
-        database="four_in_a_row"
-    )
     Parameters = request.get_json()
     x = datetime.datetime.now()
-    print(x)
-    cursor = mydb.cursor()   
-    sql = "INSERT INTO GameProgress1 (ID, Player_id, step, Location) VALUES (%s, %s, %s, %s)"
-    val = (Parameters['ID'], Parameters['Player_id'], x, str(Parameters['Location']))
-    # val = (Parameters['ID'], Parameters['Player_id'], Parameters['Location'])
+    cursor = mydb.cursor() 
+    sql ="INSERT INTO GameProgress1 (ID, Player_id, step, Location, Knowing) VALUES (%s, %s, %s, %s, %s)"
+    val = (Parameters['ID'], Parameters['Player_id'], x, str(Parameters['Location']), 0)
     cursor.execute(sql, val)
     mydb.commit()
-    print(Parameters)
     res = make_response(jsonify(Parameters), 200)
+    print("Info")
+    print(Parameters)
     return res
 
 
@@ -91,24 +78,27 @@ def startGame(user_id):
         password="Bc1b1dc11",
         database="four_in_a_row"
     )
+    start_time = time.time()
     cursor = mydb.cursor()  
-    sql = "SELECT * FROM GameProgress1 WHERE ID = %s  ORDER BY step DESC LIMIT 1;"
-    val = (user_id ,) 
-    cursor.execute(sql, val)
+    cursor.execute("SELECT * FROM GameProgress1 WHERE ID = %s  ORDER BY step DESC LIMIT 1;", (user_id ,) )
     myresult = cursor.fetchall()
-    print(myresult)
+    # print(myresult1)
+    # if myresult != [] :
+    #     sql1 = "UPDATE GameProgress1 SET knowing = %s WHERE step = %s"
+    #     limit1 = (myresult[0][4]) + 1
+    #     print(limit1)
+    #     date = myresult[0][2]
+    #     val1 = (limit1, date)
+    #     cursor.execute(sql1, val1)
+    #     mydb.commit()
     res = make_response(jsonify(myresult), 200)
+    print(myresult)
+    print (time.time() - start_time, 's')
     return res
 
 
 @app.route('/id/<int:user_id>/save_name2', methods=["POST"])
 def saveName2(user_id): 
-    mydb = mysql.connector.connect(
-        host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
-        user="admin",
-        password="Bc1b1dc11",
-        database="four_in_a_row"
-    )
     name2 = request.get_json()
     cursor = mydb.cursor()
     sql = "UPDATE game SET name2 = %s WHERE id = %s"
@@ -133,12 +123,7 @@ def ViewName2(user_id):
     myresult = cursor.fetchall()
     name2 = myresult[0][0]
     res = make_response(jsonify(name2), 200)
-    print(res)
     return res
-
-     
-    
-
 
 if __name__ == "__main__":
     app.run(port=4998) 

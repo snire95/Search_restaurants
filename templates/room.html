@@ -17,6 +17,7 @@
         <div class= "remove" id = "play">
             <p><button class="new-game" onclick = "location.reload()"><i class="ion-ios-plus-outline"></i>New game</button></p>
             <p><button class="send-button"  onclick = "newTab()">New Tab</button></p>
+            <p><div class="winer" id="Win"></div></p>
 
 	        <div class="show-player">
                 <div class="wrapper-1 active"> 
@@ -28,8 +29,8 @@
                 <div class="wrapper-2 not-active">
                     <div class="player-2">
                         <div id = div-input-name-2>
-                            <p><input class = "name-2" id ="name_2"  placeholder="Enter name user"></p>
-                            <button class="send-button"  onclick = "saveName2()">send name</button>
+                            <p><input class = "name-2" id ="name_2"  placeholder="Enter name user" onkeypress="myFunction(event)"></p>
+                            <button class="send-button"  onclick = "saveName2()"  >send name</button>
                         </div>
                         <div id = "div-name-2" class="remove">
                             <div class="player-name" id="name-2">Waiting for player</div>

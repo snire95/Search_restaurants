@@ -111,7 +111,15 @@ input{
 
 
 }
+.winer{
+    font-weight: 300;
+    color: rgb(89, 89, 233);
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;   
 
+}
 .active { background-color: #19e7d6; }
 .active .player-name { font-weight: 600; }
 .not-active { background-color: #fff; }

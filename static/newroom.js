@@ -48,7 +48,6 @@ ViewName2 = () => {
 
 
 newTab = () => {
-    console.log(`${window.location.href}`)
     window.open(`${location.href}`) 
 }
 
