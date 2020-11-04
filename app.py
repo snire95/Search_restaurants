@@ -6,6 +6,15 @@ import json
 import datetime
 import time
 
+# class tures :
+#     def __init__(self, ID, idGame, PlayerId, td, tr ):
+#         self.ID = ID
+#         self.idGame = idGame
+#         self.PlayerId = PlayerId
+#         self.td = td
+#         self.tr = tr
+
+
 app = Flask(__name__)
 mydb = mysql.connector.connect(
     host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
@@ -15,7 +24,6 @@ mydb = mysql.connector.connect(
 )
 @app.route('/')
 def home():
-
     return render_template('game.html')
 
 @app.route('/newRoom', methods=["POST"])
@@ -46,6 +54,7 @@ def openGmae(user_id):
     adr = (user_id ,)
     cursor.execute(sql, adr) 
     myresult = cursor.fetchall()
+    print(myresult)
     activeN = (myresult[0][6])+1
     sql1 = "UPDATE game SET activePlayer = %s WHERE id = %s"
     val1 = (activeN, user_id)
@@ -58,20 +67,20 @@ def openGmae(user_id):
 @app.route('/id/<int:user_id>/SendInfo', methods=["POST"])
 def SendInfo(user_id):
     Parameters = request.get_json()
-    x = datetime.datetime.now()
     cursor = mydb.cursor() 
-    sql ="INSERT INTO GameProgress1 (ID, Player_id, step, Location, Knowing) VALUES (%s, %s, %s, %s, %s)"
-    val = (Parameters['ID'], Parameters['Player_id'], x, str(Parameters['Location']), 0)
+    print(Parameters)
+
+    sql ="INSERT INTO QueueTabl (idGame, Player_id, tr, td) VALUES (%s, %s, %s, %s)"
+    val = (Parameters['ID'], Parameters['Player_id'],Parameters['tr'], Parameters['td'])
     cursor.execute(sql, val)
     mydb.commit()
     res = make_response(jsonify(Parameters), 200)
-    print("Info")
     print(Parameters)
     return res
 
 
-@app.route("/id/<int:user_id>/startGame")
-def startGame(user_id):
+@app.route("/id/<int:GameId>/NextTurn")
+def NextTurn(GameId):
     mydb = mysql.connector.connect(
         host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
         user="admin",
@@ -80,21 +89,25 @@ def startGame(user_id):
     )
     start_time = time.time()
     cursor = mydb.cursor()  
-    cursor.execute("SELECT * FROM GameProgress1 WHERE ID = %s  ORDER BY step DESC LIMIT 1;", (user_id ,) )
-    myresult = cursor.fetchall()
-    # print(myresult1)
-    # if myresult != [] :
-    #     sql1 = "UPDATE GameProgress1 SET knowing = %s WHERE step = %s"
-    #     limit1 = (myresult[0][4]) + 1
-    #     print(limit1)
-    #     date = myresult[0][2]
-    #     val1 = (limit1, date)
-    #     cursor.execute(sql1, val1)
-    #     mydb.commit()
-    res = make_response(jsonify(myresult), 200)
-    print(myresult)
-    print (time.time() - start_time, 's')
+    cursor.execute("SELECT * FROM QueueTabl WHERE idGame = %s  ORDER BY ID DESC LIMIT 1;", (GameId ,) )
+    ture = cursor.fetchall()
+    if ture != []:
+        tureObj = {
+            "ID"  : ture[0][0],
+            "idGame" : ture[0][1],
+            "PlayerId" : ture[0][2],
+            "tr" : ture[0][3],
+            "td" : ture[0][4]
+        }
+        print("test")   
+        tureObj = json.dumps(tureObj)
+        res = make_response(jsonify(tureObj), 200)    
+        print (time.time() - start_time, 's')
+    else:
+        res = make_response(jsonify([]), 200)    
     return res
+
+
 
 
 @app.route('/id/<int:user_id>/save_name2', methods=["POST"])

@@ -4,9 +4,10 @@ const play = document.getElementById("play");
 const game = document.getElementById("game");   
 const add = document.getElementById("startGame");
 var myVar = setInterval(ViewName2, 3000);
+var IdGlobsl = 0
 
 myFunction = (event) =>  {
-    var x = event.which || event.keyCode;
+    var x = event.which || event.keyCode; 
     if (x == 13) {
         saveName2()
     }
@@ -24,9 +25,6 @@ saveName2 = () => {
     }).then(statusFetch(response))
     .catch(catchFetch(error));  
 }
-
-
-
 
 fetch(`${window.location.href}/creatTable`)
 .then(function (response) {
@@ -59,42 +57,46 @@ fetch(`${window.location.href}/creatTable`)
         createEvent(Parameter); 
         if(Parameter.Player !== Parameter.active){
             BoardUpdate(Parameter)
-        }
-         
+        }       
     })
 })
 
 BoardUpdate = (Parameter) => {
+
     var fun = setInterval( async () => {
-        const response = await fetch(`${window.location.href}/startGame`)
-        const data = await response.json();       
-        if(data[0] !== undefined){
-            if(data[0][1] !== Parameter.Player && data[0][4] == 0){
-                pp = (data[0][3]);
-                tr = parseInt(pp.charAt(1));
-                td = parseInt(pp.charAt(4));
-                tdd = arrayLocation(tr, Parameter.arrGame, Parameter.rows);
-                Parameter.active = data[0][1]
-                playerColorChange(td, tr, Parameter);
-                testGame(td, tr, Parameter);
-                if(Parameter.victory){
-                    setActivePlayer();
-                    console.log( "td : " + td + " tr : " + tr );
-                    console.log(Parameter);
-                    if(Parameter.active == 1){
-                        Parameter.active = 2;
-                    }else 
-                        Parameter.active = 1;
+        if(Parameter.victory){
+            const response = await fetch(`${window.location.href}/NextTurn`)
+            const data = await response.json();  
+            console.log(data)
+            if(data[0] !== undefined){
+                var ture = JSON.parse(data)
+                if (IdGlobsl != ture.ID){
+                 console.log(ture)    
+                if(ture.PlayerId !== Parameter.Player){
+                    tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
+                    Parameter.active =ture.PlayerId 
+                    playerColorChange(ture.td, ture.tr, Parameter);
+                    testGame(ture.td, ture.tr, Parameter);
+                    if(Parameter.victory){
+                        setActivePlayer();
+                        if(Parameter.active == 1){
+                            Parameter.active = 2;
+                        }else 
+                            Parameter.active = 1;
+                    }
+                    clearInterval(fun);
+                }                   
                 }
-          
-                clearInterval(fun);
+                IdGlobsl = ture.ID
+
             }
+            if (response.status !== 200) {
+                console.log(`Looks like there was a problem. Status code: ${response.status}`);
+                return;
+            } 
         }
-        if (response.status !== 200) {
-            console.log(`Looks like there was a problem. Status code: ${response.status}`);
-            return;
-        }     
-    }, 2000);
+    }, 700);
+    
 }
 
 
@@ -110,4 +112,7 @@ catchFetch = (error) => {
     console.log("Fetch error: " + error);
 }
 
-
+copeLink = () => {
+    console.log('whatsapp://send?text=' + `${window.location.href}`)
+    window.open('whatsapp://send?text=' + `${window.location.href}`)
+}

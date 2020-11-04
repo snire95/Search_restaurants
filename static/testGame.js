@@ -20,9 +20,7 @@ testGame = (td, tr, Parameter) => {
 // }
   
 testCondition = (testingDirection1, testingDirection2, Parameters, victorySequence, td, tr) => {
-    console.log("testingDirection1 : " + testingDirection1)
-    console.log("testingDirection2 : " + testingDirection2)
-    console.log(Parameters)
+
     let condition = true , condition1 = true ;
     for (let i = 1; i <= (Parameters.victoryScore + 1); i++) {
         if (testingDirection1 == 1) {
@@ -36,9 +34,6 @@ testCondition = (testingDirection1, testingDirection2, Parameters, victorySequen
             condition1 = (tr - i) >= 0;
         } 
         if (condition && condition1) {
-            console.log(Parameters)
-            console.log(td + (i * testingDirection1))
-            console.log(tr + (i * testingDirection2))
             if (Parameters.arrGame[td + (i * testingDirection1)][tr + (i * testingDirection2)] == Parameters.color) {
                 victorySequence.push([(td + (i * testingDirection1)), (tr + (i * testingDirection2))]);
             }else {

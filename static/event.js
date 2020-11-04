@@ -1,18 +1,26 @@
 createEvent = (Parameters) => {
+    // name2 = (document.querySelector('#name-2').textContent)
+    Waiting= "Waiting for player";
     for (let tr = 0; tr < Parameters.columns; tr++) {
         let TR = document.querySelector('#tr' + tr);
         TR.addEventListener("mouseover", function () {
-            td = arrayLocation(tr, Parameters.arrGame, Parameters.rows);
-            Parameters.color = colorPlayer(Parameters.Player);
-            playerColorChangeMouseover(td, tr, Parameters.color, Parameters.rows, Parameters.victory, Parameters.Player, Parameters.active);
+            if(Waiting !== (document.querySelector('#name-2').textContent)){
+                td = arrayLocation(tr, Parameters.arrGame, Parameters.rows);
+                Parameters.color = colorPlayer(Parameters.Player);
+                playerColorChangeMouseover(td, tr, Parameters.color, Parameters.rows, Parameters.victory, Parameters.Player, Parameters.active);
+            }
         });
         TR.addEventListener("mouseout", function () {
-            td = arrayLocation(tr, Parameters.arrGame, Parameters.rows);
-            playerColorChangeMouseover(td, tr, "white", Parameters.rows, Parameters.victory,Parameters.Player, Parameters.active);
+            if(Waiting !== (document.querySelector('#name-2').textContent)){
+                td = arrayLocation(tr, Parameters.arrGame, Parameters.rows);
+                playerColorChangeMouseover(td, tr, "white", Parameters.rows, Parameters.victory,Parameters.Player, Parameters.active);
+            }
         });
         TR.addEventListener('click', function () {
-            td = arrayLocation(tr, Parameters.arrGame, Parameters.rows);
-            dotColor(td, tr, Parameters);
+            if(Waiting !== (document.querySelector('#name-2').textContent)){
+                td = arrayLocation(tr, Parameters.arrGame, Parameters.rows);
+                dotColor(td, tr, Parameters);
+            }
         });
     }
 }
@@ -24,7 +32,7 @@ playerColorChange = (td, tr,Parameters) =>{
 }
 
 
-playerColorChangeMouseover = (tr, td, color, row,victory, Player, active) => {
+playerColorChangeMouseover = (tr, td, color, row, victory, Player, active) => {
     if(victory && tr < row &&  Player == active) {
     document.getElementById("tr" + td + "td" + tr).style.background = color;
     }  
@@ -38,7 +46,6 @@ ViewName = (name) => {
     }
     document.getElementById("div-input-name-2").classList.add('remove');
     document.getElementById("div-name-2").classList.remove('remove');  
-
 }
 
 dotColor = ( td, tr, Parameter) => {
@@ -80,8 +87,9 @@ sendInfo = (Parameter, tr ,td) => {
     QueueData = {
         ID : Parameter.id ,
         Player_id : Parameter.active,
-        Location : [tr ,td]
     }
+    QueueData.tr = tr;
+    QueueData.td = td
     fetch(`${window.location.href}/SendInfo`, {
         method: "POST",
         credentials: "include",
