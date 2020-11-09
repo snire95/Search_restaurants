@@ -51,17 +51,20 @@ GameRecovery = (Parameter) => {
                     playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
                     IdGlobsl = Allture[Allture.length-1].ID
                     testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
+                    console.log("win : " + Parameter.victory)
                     if(Parameter.victory){
                         setActivePlayer();
                     }
                 }
                 if(Parameter.victory && Parameter.active == Allture[Allture.length-1].PlayerId){
+                    console.log(Parameter.victory)
                     if(Parameter.active == 1){
                         Parameter.active = 2;
                     }else 
                         Parameter.active = 1;
                 }
-
+                game.classList.remove('remove');
+                play.classList.remove('remove');
                 
             }
     
@@ -72,6 +75,7 @@ GameRecovery = (Parameter) => {
 
 BoardUpdate = (Parameter) => {
     var fun = setInterval( async () => {
+        console.log(Parameter.victory)
         if(Parameter.victory){
             const response = await fetch(`${window.location.href}/NextTurn`)
             const data = await response.json();  
@@ -82,6 +86,8 @@ BoardUpdate = (Parameter) => {
                         tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
                         playerColorChange(ture.td, ture.tr, Parameter);
                         testGame(ture.td, ture.tr, Parameter);
+                        console.log(Parameter.active)
+                        console.log(Parameter.Player)
                         if(Parameter.victory){
                             IdGlobsl = ture.ID
                             setActivePlayer();
@@ -101,7 +107,6 @@ BoardUpdate = (Parameter) => {
                 return;
             } 
         }
-   
     },2000);
     
 }
