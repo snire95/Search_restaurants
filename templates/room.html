@@ -13,15 +13,11 @@
         <script src="/static/event.js" charset="utf-8"></script>
 	</head>
 	<body>
-
         <div class= "remove" id = "play">
-            <p><button class="new-game" onclick = "location.reload()"><i class="ion-ios-plus-outline"></i>New game</button></p>
+            <p><button class="new-game" onclick = "newGame()"><i class="ion-ios-plus-outline"></i>New game</button></p>
             <p><button class="send-button"  onclick = "newTab()">New Tab</button></p>
-            <p><button class="send-button"  onclick = "copeLink()">cope link</button></p>
-
-
+            <p><button class="send-button"  onclick = "ShareWhatsApp()"> Share a link to WhatsApp </button></p>
             <p><div class="winer" id="Win"></div></p>
-
 	        <div class="show-player">
                 <div class="wrapper-1 active"> 
                     <div class="player-1">
@@ -32,7 +28,7 @@
                 <div class="wrapper-2 not-active">
                     <div class="player-2">
                         <div id = div-input-name-2>
-                            <p><input class = "name-2" id ="name_2"  placeholder="Enter name user" onkeypress="myFunction(event)"></p>
+                            <p><input class = "name-2" id ="name_2"  placeholder="Enter name user" onkeypress="EventEnter(event)"></p>
                             <button class="send-button"  onclick = "saveName2()"  >send name</button>
                         </div>
                         <div id = "div-name-2" class="remove">

@@ -35,19 +35,22 @@ newRoom = () => {
     
 }
 
-ViewName2 = (Parameter) => {
+ViewName2 = () => {
   fetch(`${window.location.href}/ViewName2`)
   .then(response => response.json())
   .then(function(data) {
       if(data != null){
-          ViewName(data);
-          clearInterval(myVar);
+        ViewName(data);
+        clearInterval(myVar);
       }
   });  
 }
 
 newTab = () => {
     window.open(`${location.href}`) 
+}
+newGame = () => {
+  window.open(`${origin}`) 
 }
 
 
@@ -57,32 +60,32 @@ function setCookie(cname,cvalue,exdays) {
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires=" + d.toGMTString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-  }
+}
   
-  function getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
+function getCookie(cname) {
+  var name = cname + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
     }
-    return "";
-  }
-  
-  function checkCookie() {
-    var user=getCookie("id");
-    if (user != "") {
-      alert("Welcome again " + user);
-    } else {
-       user = prompt("Please enter your name:","");
-       if (user != "" && user != null) {
-         setCookie("id", user, 30);
-       }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
     }
   }
+  return "";
+}
+  
+function checkCookie(activeNotCookie) {
+  var ActivePlayer = getCookie("id&Player" + window.location.pathname);
+  if (ActivePlayer != "" && ActivePlayer != "undefined") {
+    game.classList.add('remove');
+    play.classList.add('remove');
+    return ActivePlayer
+  } else {
+      setCookie("id&Player" + window.location.pathname, activeNotCookie, 30);
+      return activeNotCookie
+    }
+}

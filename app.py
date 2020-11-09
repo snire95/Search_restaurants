@@ -6,22 +6,18 @@ import json
 import datetime
 import time
 
-# class tures :
-#     def __init__(self, ID, idGame, PlayerId, td, tr ):
-#         self.ID = ID
-#         self.idGame = idGame
-#         self.PlayerId = PlayerId
-#         self.td = td
-#         self.tr = tr
 
 
 app = Flask(__name__)
+
 mydb = mysql.connector.connect(
     host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
     user="admin",
     password="Bc1b1dc11",
     database="four_in_a_row"
 )
+cursor = mydb.cursor()  
+
 @app.route('/')
 def home():
     return render_template('game.html')
@@ -29,7 +25,6 @@ def home():
 @app.route('/newRoom', methods=["POST"])
 def saveName1(): 
     Parameters = request.get_json()
-    cursor = mydb.cursor()
     sql = "INSERT INTO game (columnsG, rowsG, victoryScore, LastModifiedMounter, activePlayer, victory, name1) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     val = (Parameters['columns'],
         Parameters['rows'], 
@@ -49,33 +44,42 @@ def openGmaeID(user_id):
 
 @app.route("/id/<int:user_id>/creatTable")
 def openGmae(user_id):
-    cursor = mydb.cursor()
     sql = "SELECT * FROM game WHERE id = %s"
     adr = (user_id ,)
     cursor.execute(sql, adr) 
-    myresult = cursor.fetchall()
-    print(myresult)
-    activeN = (myresult[0][6])+1
-    sql1 = "UPDATE game SET activePlayer = %s WHERE id = %s"
-    val1 = (activeN, user_id)
-    cursor.execute(sql1, val1)
-    mydb.commit()
-    res = make_response(jsonify(myresult), 200)
-    return res
+    data = cursor.fetchall()
+    if data != []:
+        parameter = {
+            "id": data[0][0],
+            "rows" :  data[0][2],
+            "columns" : data[0][1],
+            "victoryScore" : data[0][3],
+            "name1" : data[0][8],
+            "victory": data[0][7],
+            "Player" : data[0][6],
+            "LastModifiedMounter" : data[0][4]
+        }
+        parameter = json.dumps(parameter)
+        nextActive = (data[0][6]) + 1
+        sql1 = "UPDATE game SET activePlayer = %s WHERE id = %s"
+        val1 = (nextActive, user_id)
+        cursor.execute(sql1, val1)
+        mydb.commit()
+        res = make_response(jsonify(parameter), 200)
+        return res
 
 
 @app.route('/id/<int:user_id>/SendInfo', methods=["POST"])
 def SendInfo(user_id):
+    start_time = time.time()
     Parameters = request.get_json()
-    cursor = mydb.cursor() 
-    print(Parameters)
-
     sql ="INSERT INTO QueueTabl (idGame, Player_id, tr, td) VALUES (%s, %s, %s, %s)"
     val = (Parameters['ID'], Parameters['Player_id'],Parameters['tr'], Parameters['td'])
     cursor.execute(sql, val)
     mydb.commit()
     res = make_response(jsonify(Parameters), 200)
-    print(Parameters)
+    print("time")
+    print (time.time() - start_time, 's')
     return res
 
 
@@ -99,13 +103,40 @@ def NextTurn(GameId):
             "tr" : ture[0][3],
             "td" : ture[0][4]
         }
-        print("test")   
         tureObj = json.dumps(tureObj)
         res = make_response(jsonify(tureObj), 200)    
-        print (time.time() - start_time, 's')
     else:
-        res = make_response(jsonify([]), 200)    
+        res = make_response(jsonify([]), 200)   
+    print (time.time() - start_time, 's')
+ 
     return res
+
+@app.route('/id/<int:GameID>/GameRecovery')
+def GameRecovery(GameID):
+    mydb = mysql.connector.connect(
+        host="four-in-a-row.cfvxrnptegvy.us-east-2.rds.amazonaws.com",
+        user="admin",
+        password="Bc1b1dc11",
+        database="four_in_a_row"
+    )
+    cursor = mydb.cursor()  
+    cursor.execute("SELECT * FROM QueueTabl WHERE idGame = %s ", (GameID ,) )
+    AllTureArray = cursor.fetchall()
+    if AllTureArray == []: 
+        return make_response(jsonify([]), 200)   
+    else: 
+        list = [] 
+        for x in AllTureArray:
+            tureObj = {
+                "ID"  : x[0],
+                "idGame" : x[1],
+                "PlayerId" : x[2],
+                "tr" : x[3],
+                "td" : x[4]
+            }
+            print(tureObj)
+            list.append(tureObj)
+        return make_response(jsonify(list), 200)     
 
 
 
@@ -113,7 +144,6 @@ def NextTurn(GameId):
 @app.route('/id/<int:user_id>/save_name2', methods=["POST"])
 def saveName2(user_id): 
     name2 = request.get_json()
-    cursor = mydb.cursor()
     sql = "UPDATE game SET name2 = %s WHERE id = %s"
     val = (name2, user_id)
     cursor.execute(sql, val)

@@ -3,28 +3,10 @@
 const play = document.getElementById("play");
 const game = document.getElementById("game");   
 const add = document.getElementById("startGame");
-var myVar = setInterval(ViewName2, 3000);
+var myVar = setInterval(ViewName2, 800);
 var IdGlobsl = 0
 
-myFunction = (event) =>  {
-    var x = event.which || event.keyCode; 
-    if (x == 13) {
-        saveName2()
-    }
-}
 
-saveName2 = () => {
-    name2 =  document.querySelector('#name_2').value;
-    ViewName(name2)
-    fetch(`${window.location.href}/save_name2`, {
-        method: "POST",
-        credentials: "include",
-        body: JSON.stringify(name2),
-        cache: "no-cache",
-        headers: new Headers({"content-type": "application/json"})
-    }).then(statusFetch(response))
-    .catch(catchFetch(error));  
-}
 
 fetch(`${window.location.href}/creatTable`)
 .then(function (response) {
@@ -33,17 +15,11 @@ fetch(`${window.location.href}/creatTable`)
         return;
     }
     response.json().then(function (data) {
-        var Parameter = {
-            id: data[0][0],
-            rows :  data[0][2],
-            columns : data[0][1],
-            victoryScore : data[0][3],
-            name1 : data[0][8],
-            victory: data[0][7],
-            Player : data[0][6],
-            LastModifiedMounter : data[0][4],
-            active : 1
-        };
+        var Parameter = JSON.parse(data)
+        Parameter.active = 1 ;
+        console.log(typeof Parameter.Player )
+        Parameter.Player = checkCookie(Parameter.Player)
+        Parameter.Player = parseInt(Parameter.Player)
         if(Parameter.Player == 1){
             document.getElementById("div-input-name-2").classList.add('remove');
             document.getElementById("div-name-2").classList.remove('remove');  
@@ -51,43 +27,73 @@ fetch(`${window.location.href}/creatTable`)
         tableCreation(Parameter); 
         document.querySelector('#name-1').textContent = Parameter.name1;
         document.querySelector('#win').textContent = "Sequence of "+ Parameter.victoryScore +" for victory";
-        game.classList.remove('remove');
-        play.classList.remove('remove');
         Parameter.arrGame = matrixCreature(Parameter.rows,Parameter.columns);
         createEvent(Parameter); 
-        if(Parameter.Player !== Parameter.active){
-            BoardUpdate(Parameter)
-        }       
+        GameRecovery(Parameter);
+        BoardUpdate(Parameter)
     })
 })
 
-BoardUpdate = (Parameter) => {
+GameRecovery = (Parameter) => {
+    fetch(`${window.location.href}/GameRecovery`)
+    .then(function (response) {
+        if (response.status !== 200) {
+            console.log(`Looks like there was a problem. Status code: ${response.status}`);
+            return;
+        }
+        response.json().then(function (Allture) {
+            if (Allture == [] || undefined == Allture[0]){
+                game.classList.remove('remove');
+                play.classList.remove('remove');
+            }else {
+                for(i=0; i< Allture.length; i++){
+                    Parameter.active = Allture[i].PlayerId;
+                    playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
+                    IdGlobsl = Allture[Allture.length-1].ID
+                    testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
+                    if(Parameter.victory){
+                        setActivePlayer();
+                    }
+                }
+                if(Parameter.victory && Parameter.active == Allture[Allture.length-1].PlayerId){
+                    if(Parameter.active == 1){
+                        Parameter.active = 2;
+                    }else 
+                        Parameter.active = 1;
+                }
 
+                
+            }
+    
+        })
+    }) 
+}
+
+
+BoardUpdate = (Parameter) => {
     var fun = setInterval( async () => {
         if(Parameter.victory){
             const response = await fetch(`${window.location.href}/NextTurn`)
             const data = await response.json();  
-            console.log(data)
             if(data[0] !== undefined){
                 var ture = JSON.parse(data)
-                if (IdGlobsl != ture.ID){
-                 console.log(ture)    
-                if(ture.PlayerId !== Parameter.Player){
-                    tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
-                    Parameter.active =ture.PlayerId 
-                    playerColorChange(ture.td, ture.tr, Parameter);
-                    testGame(ture.td, ture.tr, Parameter);
-                    if(Parameter.victory){
-                        setActivePlayer();
-                        if(Parameter.active == 1){
-                            Parameter.active = 2;
-                        }else 
-                            Parameter.active = 1;
-                    }
-                    clearInterval(fun);
-                }                   
+                if (IdGlobsl != ture.ID || IdGlobsl > ture.ID && arrGame[ture.td][ture.tr] == 0){
+                    if(ture.PlayerId !== Parameter.Player){
+                        tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
+                        playerColorChange(ture.td, ture.tr, Parameter);
+                        testGame(ture.td, ture.tr, Parameter);
+                        if(Parameter.victory){
+                            IdGlobsl = ture.ID
+                            setActivePlayer();
+                            if(Parameter.active == 1){
+                                Parameter.active = 2;
+                            }else 
+                                Parameter.active = 1;
+                        }
+                        // clearInterval(fun);
+                    }                   
                 }
-                IdGlobsl = ture.ID
+                
 
             }
             if (response.status !== 200) {
@@ -95,7 +101,8 @@ BoardUpdate = (Parameter) => {
                 return;
             } 
         }
-    }, 700);
+   
+    },2000);
     
 }
 
@@ -112,7 +119,33 @@ catchFetch = (error) => {
     console.log("Fetch error: " + error);
 }
 
-copeLink = () => {
-    console.log('whatsapp://send?text=' + `${window.location.href}`)
+ShareWhatsApp = () => {
     window.open('whatsapp://send?text=' + `${window.location.href}`)
+}
+EnternewRoom = (event) => {
+    var x = event.which || event.keyCode; 
+    if (x == 13) {
+        newRoom()
+    }
+}
+EventEnter = (event) =>  {
+    var x = event.which || event.keyCode; 
+    if (x == 13) {
+        saveName2()
+    }
+}
+
+saveName2 = () => {
+    if(document.querySelector('#name-2').textContent != "winner!"){
+        name2 =  document.querySelector('#name_2').value;
+        ViewName(name2)
+        fetch(`${window.location.href}/save_name2`, {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(name2),
+            cache: "no-cache",
+            headers: new Headers({"content-type": "application/json"})
+        }).then(statusFetch(response))
+        .catch(catchFetch(error)); 
+    } 
 }

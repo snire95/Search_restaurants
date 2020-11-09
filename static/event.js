@@ -48,7 +48,7 @@ ViewName = (name) => {
     document.getElementById("div-name-2").classList.remove('remove');  
 }
 
-dotColor = ( td, tr, Parameter) => {
+dotColor = (td, tr, Parameter) => {
     if (Parameter.victory && td < Parameter.rows && Parameter.Player == Parameter.active) {
         playerColorChange(td, tr,Parameter);
         testGame(td, tr, Parameter);
