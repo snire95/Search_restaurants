@@ -81,8 +81,6 @@ function getCookie(cname) {
 function checkCookie(activeNotCookie) {
   var ActivePlayer = getCookie("id&Player" + window.location.pathname);
   if (ActivePlayer != "" && ActivePlayer != "undefined") {
-    game.classList.add('remove');
-    play.classList.add('remove');
     return ActivePlayer
   } else {
       setCookie("id&Player" + window.location.pathname, activeNotCookie, 30);
