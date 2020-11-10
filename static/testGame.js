@@ -50,6 +50,10 @@ showVictory = (Parameters,victoryArray) => {
         Parameters.victory = false;
         // winPlayer = nameWin(Parameters.activePlayer);
         document.querySelector('#name-' + Parameters.active).textContent = 'winner!';
+        console.log(Parameters.active)
+        if(Parameters.active == 2){
+            setCookie("name2" + window.location.pathname, "winner!", 30);
+        }
         for( var j = 0 ; j <victoryArray.length ; j++){
             document.getElementById("tr" + (victoryArray[j][1]) + "td" + (victoryArray[j][0])).style.borderColor = "yellow";  
         }

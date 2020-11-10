@@ -34,7 +34,6 @@ newRoom = () => {
     }
     
 }
-
 ViewName2 = () => {
   fetch(`${window.location.href}/ViewName2`)
   .then(response => response.json())
@@ -55,14 +54,14 @@ newGame = () => {
 
 
 
-function setCookie(cname,cvalue,exdays) {
+setCookie = (cname,cvalue,exdays) =>  {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     var expires = "expires=" + d.toGMTString();
     document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
   
-function getCookie(cname) {
+getCookie = (cname) => {
   var name = cname + "=";
   var decodedCookie = decodeURIComponent(document.cookie);
   var ca = decodedCookie.split(';');
@@ -77,13 +76,24 @@ function getCookie(cname) {
   }
   return "";
 }
-  
-function checkCookie(activeNotCookie) {
+
+checkCookie = (activeNotCookie) =>{
   var ActivePlayer = getCookie("id&Player" + window.location.pathname);
   if (ActivePlayer != "" && ActivePlayer != "undefined") {
     return ActivePlayer
   } else {
+      game.classList.add('remove');
+      play.classList.add('remove');
       setCookie("id&Player" + window.location.pathname, activeNotCookie, 30);
       return activeNotCookie
     }
 }
+checkCookiename2 = (name2) =>{
+  var name2cookie = getCookie("name2" + window.location.pathname);
+  if (name2cookie != "" && name2cookie != "undefined") {
+    return name2cookie
+  } else{
+    return name2
+  }
+}
+

@@ -40,12 +40,15 @@ playerColorChangeMouseover = (tr, td, color, row, victory, Player, active) => {
 
 ViewName = (name) => {
     if(name == ""){
+        setCookie("name2" + window.location.pathname, "Palyer-2", 30);
         document.querySelector('#name-2').textContent = "Palyer-2";
     }else{
+        setCookie("name2" + window.location.pathname, name, 30);
         document.querySelector('#name-2').textContent = name;
     }
     document.getElementById("div-input-name-2").classList.add('remove');
     document.getElementById("div-name-2").classList.remove('remove');  
+
 }
 
 dotColor = (td, tr, Parameter) => {

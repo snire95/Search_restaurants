@@ -3,10 +3,17 @@
 const play = document.getElementById("play");
 const game = document.getElementById("game");   
 const add = document.getElementById("startGame");
-var myVar = setInterval(ViewName2, 800);
-var IdGlobsl = 0
-
-
+var IdGlobsl = 0;
+var name2 = checkCookiename2("name2" + window.location.pathname)
+var existingCookie = getCookie("id&Player" + window.location.pathname);
+if("name2" + window.location.pathname == name2 && name2 != 'winner!' &&  (existingCookie != "" || existingCookie != "undefined")){
+    var myVar = setInterval(ViewName2, 800);
+}
+if("name2" + window.location.pathname != name2){
+    document.querySelector('#name-2').textContent = name2 ;
+    document.getElementById("div-input-name-2").classList.add('remove');
+    document.getElementById("div-name-2").classList.remove('remove');
+}
 
 fetch(`${window.location.href}/creatTable`)
 .then(function (response) {
@@ -17,12 +24,14 @@ fetch(`${window.location.href}/creatTable`)
     response.json().then(function (data) {
         var Parameter = JSON.parse(data)
         Parameter.active = 1 ;
-        console.log(typeof Parameter.Player )
         Parameter.Player = checkCookie(Parameter.Player)
         Parameter.Player = parseInt(Parameter.Player)
         if(Parameter.Player == 1){
             document.getElementById("div-input-name-2").classList.add('remove');
             document.getElementById("div-name-2").classList.remove('remove');  
+        }
+        if(Parameter.Player == 2 &&  document.querySelector('#name-2').textContent == "Waiting for player"){
+            document.getElementById("div-input-name-2").classList.remove('remove');
         }
         tableCreation(Parameter); 
         document.querySelector('#name-1').textContent = Parameter.name1;
@@ -30,9 +39,11 @@ fetch(`${window.location.href}/creatTable`)
         Parameter.arrGame = matrixCreature(Parameter.rows,Parameter.columns);
         createEvent(Parameter); 
         GameRecovery(Parameter);
-        BoardUpdate(Parameter)
+        BoardUpdate(Parameter);
+
     })
 })
+
 
 GameRecovery = (Parameter) => {
     fetch(`${window.location.href}/GameRecovery`)
@@ -51,18 +62,16 @@ GameRecovery = (Parameter) => {
                     playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
                     IdGlobsl = Allture[Allture.length-1].ID
                     testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
-                    console.log("win : " + Parameter.victory)
                     if(Parameter.victory){
                         setActivePlayer();
                     }
                 }
                 if(Parameter.victory && Parameter.active == Allture[Allture.length-1].PlayerId){
-                    console.log(Parameter.victory)
                     if(Parameter.active == 1){
                         Parameter.active = 2;
                     }else 
                         Parameter.active = 1;
-                }
+                }        
                 game.classList.remove('remove');
                 play.classList.remove('remove');
                 
@@ -75,7 +84,6 @@ GameRecovery = (Parameter) => {
 
 BoardUpdate = (Parameter) => {
     var fun = setInterval( async () => {
-        console.log(Parameter.victory)
         if(Parameter.victory){
             const response = await fetch(`${window.location.href}/NextTurn`)
             const data = await response.json();  
@@ -86,8 +94,6 @@ BoardUpdate = (Parameter) => {
                         tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
                         playerColorChange(ture.td, ture.tr, Parameter);
                         testGame(ture.td, ture.tr, Parameter);
-                        console.log(Parameter.active)
-                        console.log(Parameter.Player)
                         if(Parameter.victory){
                             IdGlobsl = ture.ID
                             setActivePlayer();
@@ -96,11 +102,8 @@ BoardUpdate = (Parameter) => {
                             }else 
                                 Parameter.active = 1;
                         }
-                        // clearInterval(fun);
                     }                   
                 }
-                
-
             }
             if (response.status !== 200) {
                 console.log(`Looks like there was a problem. Status code: ${response.status}`);
@@ -110,8 +113,6 @@ BoardUpdate = (Parameter) => {
     },2000);
     
 }
-
-
 
 statusFetch = (response) => {
     if (response.status !== 200) {
