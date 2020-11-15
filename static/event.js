@@ -56,7 +56,11 @@ dotColor = (td, tr, Parameter) => {
         playerColorChange(td, tr,Parameter);
         testGame(td, tr, Parameter);
         if ((td + 1) == Parameter.rows) {
+
+
             Parameter.LastModifiedMounter++;
+            console.log("tesdkvbj")
+            console.log(Parameter.LastModifiedMounter)
         };
         sendInfo(Parameter, tr, td);
         let deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns, Parameter.rows);

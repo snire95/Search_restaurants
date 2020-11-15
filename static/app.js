@@ -3,10 +3,11 @@
 const play = document.getElementById("play");
 const game = document.getElementById("game");   
 const add = document.getElementById("startGame");
+const winer = document.getElementById("winer");
 var IdGlobsl = 0;
 var name2 = checkCookiename2("name2" + window.location.pathname)
 var existingCookie = getCookie("id&Player" + window.location.pathname);
-if("name2" + window.location.pathname == name2 && name2 != 'winner!' &&  (existingCookie != "" || existingCookie != "undefined")){
+if("name2" + window.location.pathname == name2 && (existingCookie != "" || existingCookie != "undefined")){
     var myVar = setInterval(ViewName2, 800);
 }
 if("name2" + window.location.pathname != name2){
@@ -62,11 +63,23 @@ GameRecovery = (Parameter) => {
                     playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
                     IdGlobsl = Allture[Allture.length-1].ID
                     testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
-                    if(Parameter.victory){
+                    if ((Allture[i].td + 1) == Parameter.rows) {
+                        Parameter.LastModifiedMounter++;
+                        console.log("snirnrirnir")
+                        console.log(Parameter.LastModifiedMounter)
+                    };
+                    var deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
+                    
+                    if(!deadlock){
+                        setActivePlayer();
+
+                    }
+
+                    if(Parameter.victory || !deadlock){
                         setActivePlayer();
                     }
                 }
-                if(Parameter.victory && Parameter.active == Allture[Allture.length-1].PlayerId){
+                if((Parameter.victory || deadlock) && Parameter.active == Allture[Allture.length-1].PlayerId ){
                     if(Parameter.active == 1){
                         Parameter.active = 2;
                     }else 
@@ -90,11 +103,23 @@ BoardUpdate = (Parameter) => {
             if(data[0] !== undefined){
                 var ture = JSON.parse(data)
                 if (IdGlobsl != ture.ID || IdGlobsl > ture.ID && arrGame[ture.td][ture.tr] == 0){
+
                     if(ture.PlayerId !== Parameter.Player){
                         tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
                         playerColorChange(ture.td, ture.tr, Parameter);
                         testGame(ture.td, ture.tr, Parameter);
-                        if(Parameter.victory){
+                        if ((ture.td + 1) == Parameter.rows) {
+
+                            Parameter.LastModifiedMounter++;
+                            console.log("snirnrirnir")
+                            console.log(Parameter.LastModifiedMounter)
+                        };
+                        let deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
+                        if(!deadlock){
+                            setActivePlayer();
+    
+                        }
+                        if(Parameter.victory && deadlock){
                             IdGlobsl = ture.ID
                             setActivePlayer();
                             if(Parameter.active == 1){
@@ -142,7 +167,6 @@ EventEnter = (event) =>  {
 }
 
 saveName2 = () => {
-    if(document.querySelector('#name-2').textContent != "winner!"){
         name2 =  document.querySelector('#name_2').value;
         ViewName(name2)
         fetch(`${window.location.href}/save_name2`, {
@@ -153,5 +177,4 @@ saveName2 = () => {
             headers: new Headers({"content-type": "application/json"})
         }).then(statusFetch(response))
         .catch(catchFetch(error)); 
-    } 
 }

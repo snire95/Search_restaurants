@@ -76,6 +76,17 @@ input{
     color: #3aBeB5;
     /* margin-left: 10px; */
 }
+.Thewiner{
+    font-size: 70px;
+    /* background: none;
+    border: none; */
+    color: #fd0000;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center; 
+}
+
 
 .name-game {
     font-weight: 300;

@@ -48,18 +48,19 @@ testCondition = (testingDirection1, testingDirection2, Parameters, victorySequen
 showVictory = (Parameters,victoryArray) => {
     if (victoryArray.length >= Parameters.victoryScore) {
         Parameters.victory = false;
-        // winPlayer = nameWin(Parameters.activePlayer);
-        document.querySelector('#name-' + Parameters.active).textContent = 'winner!';
+        game.classList.remove('remove');
         console.log(Parameters.active)
         if(Parameters.active == 2){
-            setCookie("name2" + window.location.pathname, "winner!", 30);
+            document.querySelector('#winer').textContent = 'The winner is ' + document.querySelector('#name-2').textContent;
+        }else{
+            document.querySelector('#winer').textContent = 'The winner is ' + Parameters.name1;
         }
         for( var j = 0 ; j <victoryArray.length ; j++){
+            console.log(victoryArray[j][1]+ "  :  " +victoryArray[j][0])
             document.getElementById("tr" + (victoryArray[j][1]) + "td" + (victoryArray[j][0])).style.borderColor = "yellow";  
         }
     }    
 }
-
 
 
 testErr = (Parameters) => {
