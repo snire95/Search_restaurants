@@ -69,10 +69,39 @@ def openGmae(user_id):
         return res
 
 
-@app.route('/id/<int:user_id>/SendInfo', methods=["POST"])
-def SendInfo(user_id):
+@app.route('/id/<int:GameId>/SendInfo', methods=["POST"])
+def SendInfo(GameId):
     start_time = time.time()
     Parameters = request.get_json()
+    cursor.execute("SELECT * FROM QueueTabl WHERE idGame = %s  ORDER BY ID DESC LIMIT 1;", (GameId ,) )
+    ture = cursor.fetchall()
+    if ture != []:
+        print(ture[0][2])
+        if Parameters['Player_id'] > 2 or Parameters['Player_id'] < 1:
+            print("activ player not 1 or 2")
+            return ""   
+        tureObj = {
+            "ID"  : ture[0][0],
+            "idGame" : ture[0][1],
+            "PlayerId" : ture[0][2],
+            "tr" : ture[0][3],
+            "td" : ture[0][4]
+        }
+        print(ture[0][2])
+        print(Parameters['Player_id'])
+        tureObj = json.dumps(tureObj)
+        if ture[0][2] == Parameters['Player_id']:
+            print("active player Equal to Player_id")
+            return ""
+   
+
+
+
+
+               
+
+
+
     sql ="INSERT INTO QueueTabl (idGame, Player_id, tr, td) VALUES (%s, %s, %s, %s)"
     val = (Parameters['ID'], Parameters['Player_id'],Parameters['tr'], Parameters['td'])
     cursor.execute(sql, val)
