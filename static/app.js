@@ -27,7 +27,7 @@ fetch(`${window.location.href}/creatTable`)
         Parameter.active = 1 ;
         Parameter.Player = checkCookie(Parameter.Player)
         Parameter.Player = parseInt(Parameter.Player)
-        if(Parameter.Player == 1){
+        if(Parameter.Player == 1 || Parameter.Player > 2 ){
             document.getElementById("div-input-name-2").classList.add('remove');
             document.getElementById("div-name-2").classList.remove('remove');  
         }
@@ -58,33 +58,41 @@ GameRecovery = (Parameter) => {
                 game.classList.remove('remove');
                 play.classList.remove('remove');
             }else {
-                for(i=0; i< Allture.length; i++){
-                    Parameter.active = Allture[i].PlayerId;
-                    playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
-                    IdGlobsl = Allture[Allture.length-1].ID
+                if(!Allture[Allture.length-1].victory){
                     testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
-                    if ((Allture[i].td + 1) == Parameter.rows) {
-                        Parameter.LastModifiedMounter++;
-                        console.log("snirnrirnir")
-                        console.log(Parameter.LastModifiedMounter)
-                    };
-                    var deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
-                    
-                    if(!deadlock){
-                        setActivePlayer();
-
+                }else{
+                    for(i=0; i< Allture.length; i++){
+                        Parameter.active = Allture[i].PlayerId;
+                        playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
+                        IdGlobsl = Allture[Allture.length-1].ID
+                        if ((Allture[i].td + 1) == Parameter.rows) {
+                            Parameter.LastModifiedMounter++;
+                            console.log("snirnrirnir")
+                            console.log(Parameter.LastModifiedMounter)
+                        };
+                        var deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
+                        
+                        if(!deadlock){
+                            console.log("dcf")
+                            setActivePlayer();
+                        }
+    
+    
+    
                     }
-
+                    testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
                     if(Parameter.victory || !deadlock){
                         setActivePlayer();
                     }
+    
+                    if((Parameter.victory || deadlock) && Parameter.active == Allture[Allture.length-1].PlayerId ){
+                        if(Parameter.active == 1){
+                            Parameter.active = 2;
+                        }else 
+                            Parameter.active = 1;
+                    } 
                 }
-                if((Parameter.victory || deadlock) && Parameter.active == Allture[Allture.length-1].PlayerId ){
-                    if(Parameter.active == 1){
-                        Parameter.active = 2;
-                    }else 
-                        Parameter.active = 1;
-                }        
+       
                 game.classList.remove('remove');
                 play.classList.remove('remove');
                 

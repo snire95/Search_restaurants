@@ -85,7 +85,8 @@ def SendInfo(GameId):
             "idGame" : ture[0][1],
             "PlayerId" : ture[0][2],
             "tr" : ture[0][3],
-            "td" : ture[0][4]
+            "td" : ture[0][4],
+            "victory" : ture[0][5],
         }
         print(ture[0][2])
         print(Parameters['Player_id'])

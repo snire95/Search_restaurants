@@ -94,6 +94,7 @@ sendInfo = (Parameter, tr ,td) => {
     QueueData = {
         ID : Parameter.id ,
         Player_id : Parameter.active,
+        victory : Parameter.victory, 
     }
     QueueData.tr = tr;
     QueueData.td = td
