@@ -16,7 +16,13 @@ if("name2" + window.location.pathname != name2){
     document.getElementById("div-name-2").classList.remove('remove');
 }
 
-fetch(`${window.location.href}/creatTable`)
+fetch(`${window.location.href}/creatTable`, {
+    method: "POST",
+    credentials: "include",
+    body: JSON.stringify(existingCookie),
+    cache: "no-cache",
+    headers: new Headers({"content-type": "application/json"})
+})
 .then(function (response) {
     if (response.status !== 200) {
         console.log(`Looks like there was a problem. Status code: ${response.status}`);
@@ -27,7 +33,7 @@ fetch(`${window.location.href}/creatTable`)
         Parameter.active = 1 ;
         Parameter.Player = checkCookie(Parameter.Player)
         Parameter.Player = parseInt(Parameter.Player)
-        if(Parameter.Player == 1 || Parameter.Player > 2 ){
+        if(Parameter.Player == 1 || Parameter.Player >= 3 ){
             document.getElementById("div-input-name-2").classList.add('remove');
             document.getElementById("div-name-2").classList.remove('remove');  
         }
@@ -54,45 +60,33 @@ GameRecovery = (Parameter) => {
             return;
         }
         response.json().then(function (Allture) {
-            if (Allture == [] || undefined == Allture[0]){
-                game.classList.remove('remove');
-                play.classList.remove('remove');
-            }else {
-                if(!Allture[Allture.length-1].victory){
+            if (Allture != [] || undefined != Allture[0]){
+                for(i=0; i< Allture.length; i++){
+                    Parameter.active = Allture[i].PlayerId;
+                    playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
+                    IdGlobsl = Allture[Allture.length-1].ID
+                    if ((Allture[i].td + 1) == Parameter.rows) {
+                        Parameter.LastModifiedMounter++;
+                    };
+                    var deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
+                }
+                if(deadlock){
                     testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
-                }else{
-                    for(i=0; i< Allture.length; i++){
-                        Parameter.active = Allture[i].PlayerId;
-                        playerColorChange(Allture[i].td, Allture[i].tr, Parameter);
-                        IdGlobsl = Allture[Allture.length-1].ID
-                        if ((Allture[i].td + 1) == Parameter.rows) {
-                            Parameter.LastModifiedMounter++;
-                            console.log("snirnrirnir")
-                            console.log(Parameter.LastModifiedMounter)
-                        };
-                        var deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
-                        
-                        if(!deadlock){
-                            console.log("dcf")
-                            setActivePlayer();
-                        }
-    
-    
-    
-                    }
-                    testGame(Allture[Allture.length-1].td, Allture[Allture.length-1].tr, Parameter);
-                    if(Parameter.victory || !deadlock){
+                    if(Allture[Allture.length-1].PlayerId == 1){
                         setActivePlayer();
                     }
-    
+                    if(!Parameter.victory){
+                        setActivePlayer();
+                    }
+
                     if((Parameter.victory || deadlock) && Parameter.active == Allture[Allture.length-1].PlayerId ){
                         if(Parameter.active == 1){
                             Parameter.active = 2;
                         }else 
                             Parameter.active = 1;
-                    } 
+                    }  
                 }
-       
+                      
                 game.classList.remove('remove');
                 play.classList.remove('remove');
                 
@@ -111,30 +105,29 @@ BoardUpdate = (Parameter) => {
             if(data[0] !== undefined){
                 var ture = JSON.parse(data)
                 if (IdGlobsl != ture.ID || IdGlobsl > ture.ID && arrGame[ture.td][ture.tr] == 0){
-
                     if(ture.PlayerId !== Parameter.Player){
                         tdd = arrayLocation(ture.tr, Parameter.arrGame, Parameter.rows);
                         playerColorChange(ture.td, ture.tr, Parameter);
                         testGame(ture.td, ture.tr, Parameter);
                         if ((ture.td + 1) == Parameter.rows) {
-
                             Parameter.LastModifiedMounter++;
                             console.log("snirnrirnir")
                             console.log(Parameter.LastModifiedMounter)
                         };
                         let deadlock = stalemate(Parameter.LastModifiedMounter, Parameter.columns);
-                        if(!deadlock){
-                            setActivePlayer();
-    
+                        if(Parameter.victory){
+                            console.log(deadlock)
+                            if(deadlock){
+                                IdGlobsl = ture.ID
+                                console.log("setActivePlayer")
+                                setActivePlayer();
+                                if(Parameter.active == 1){
+                                    Parameter.active = 2;
+                                }else 
+                                    Parameter.active = 1;
+                            }
                         }
-                        if(Parameter.victory && deadlock){
-                            IdGlobsl = ture.ID
-                            setActivePlayer();
-                            if(Parameter.active == 1){
-                                Parameter.active = 2;
-                            }else 
-                                Parameter.active = 1;
-                        }
+
                     }                   
                 }
             }

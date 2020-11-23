@@ -91,6 +91,7 @@ setActivePlayer = () => {
 }
 
 sendInfo = (Parameter, tr ,td) => {
+    console.log(Parameter.arrGame)
     QueueData = {
         ID : Parameter.id ,
         Player_id : Parameter.active,

@@ -85,9 +85,10 @@ testErr = (Parameters) => {
     
 }
 stalemate = (LastModifiedMounter, column) => {
-    if (LastModifiedMounter == column) {
-        document.querySelector('#name-1').textContent = 'stalemate';
-        document.querySelector('#name-2').textContent = 'stalemate';
+    if (LastModifiedMounter >= column) {
+        document.querySelector('#winer').textContent = "stalemate"
+        //document.querySelector('#name-1').textContent = 'stalemate';
+        //document.querySelector('#name-2').textContent = 'stalemate';
         document.querySelector('.wrapper-1').classList.remove('not-active');
         document.querySelector('.wrapper-2').classList.remove('not-active');
         document.querySelector('.wrapper-1').classList.add('active');

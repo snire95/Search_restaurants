@@ -42,8 +42,9 @@ def saveName1():
 def openGmaeID(user_id):
     return render_template('room.html')
 
-@app.route("/id/<int:user_id>/creatTable")
+@app.route("/id/<int:user_id>/creatTable", methods=["POST"])
 def openGmae(user_id):
+    activePlayer = request.get_json()
     sql = "SELECT * FROM game WHERE id = %s"
     adr = (user_id ,)
     cursor.execute(sql, adr) 
@@ -60,11 +61,15 @@ def openGmae(user_id):
             "LastModifiedMounter" : data[0][4]
         }
         parameter = json.dumps(parameter)
-        nextActive = (data[0][6]) + 1
-        sql1 = "UPDATE game SET activePlayer = %s WHERE id = %s"
-        val1 = (nextActive, user_id)
-        cursor.execute(sql1, val1)
-        mydb.commit()
+        if activePlayer == "1" :
+            print(activePlayer)
+        else :    
+            nextActive = (data[0][6]) + 1
+            print(nextActive)
+            sql1 = "UPDATE game SET activePlayer = %s WHERE id = %s"
+            val1 = (nextActive, user_id)
+            cursor.execute(sql1, val1)
+            mydb.commit()
         res = make_response(jsonify(parameter), 200)
         return res
 
@@ -76,7 +81,6 @@ def SendInfo(GameId):
     cursor.execute("SELECT * FROM QueueTabl WHERE idGame = %s  ORDER BY ID DESC LIMIT 1;", (GameId ,) )
     ture = cursor.fetchall()
     if ture != []:
-        print(ture[0][2])
         if Parameters['Player_id'] > 2 or Parameters['Player_id'] < 1:
             print("activ player not 1 or 2")
             return ""   
@@ -94,15 +98,6 @@ def SendInfo(GameId):
         if ture[0][2] == Parameters['Player_id']:
             print("active player Equal to Player_id")
             return ""
-   
-
-
-
-
-               
-
-
-
     sql ="INSERT INTO QueueTabl (idGame, Player_id, tr, td) VALUES (%s, %s, %s, %s)"
     val = (Parameters['ID'], Parameters['Player_id'],Parameters['tr'], Parameters['td'])
     cursor.execute(sql, val)
@@ -138,7 +133,6 @@ def NextTurn(GameId):
     else:
         res = make_response(jsonify([]), 200)   
     print (time.time() - start_time, 's')
- 
     return res
 
 @app.route('/id/<int:GameID>/GameRecovery')
@@ -169,8 +163,6 @@ def GameRecovery(GameID):
         return make_response(jsonify(list), 200)     
 
 
-
-
 @app.route('/id/<int:user_id>/save_name2', methods=["POST"])
 def saveName2(user_id): 
     name2 = request.get_json()
@@ -197,6 +189,8 @@ def ViewName2(user_id):
     name2 = myresult[0][0]
     res = make_response(jsonify(name2), 200)
     return res
+
+
 
 if __name__ == "__main__":
     app.run(port=4998) 
