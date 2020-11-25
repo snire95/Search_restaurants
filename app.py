@@ -61,7 +61,7 @@ def openGmae(user_id):
             "LastModifiedMounter" : data[0][4]
         }
         parameter = json.dumps(parameter)
-        if activePlayer == "1" :
+        if activePlayer == "1" or activePlayer == "2":
             print(activePlayer)
         else :    
             nextActive = (data[0][6]) + 1
@@ -77,33 +77,22 @@ def openGmae(user_id):
 @app.route('/id/<int:GameId>/SendInfo', methods=["POST"])
 def SendInfo(GameId):
     start_time = time.time()
-    Parameters = request.get_json()
+    NewTurn = request.get_json()
     cursor.execute("SELECT * FROM QueueTabl WHERE idGame = %s  ORDER BY ID DESC LIMIT 1;", (GameId ,) )
-    ture = cursor.fetchall()
-    if ture != []:
-        if Parameters['Player_id'] > 2 or Parameters['Player_id'] < 1:
+    LastTurn= cursor.fetchall()
+    if LastTurn != []:
+        if NewTurn['Player_id'] > 2 or NewTurn['Player_id'] < 1:
             print("activ player not 1 or 2")
             return ""   
-        tureObj = {
-            "ID"  : ture[0][0],
-            "idGame" : ture[0][1],
-            "PlayerId" : ture[0][2],
-            "tr" : ture[0][3],
-            "td" : ture[0][4],
-            "victory" : ture[0][5],
-        }
-        print(ture[0][2])
-        print(Parameters['Player_id'])
-        tureObj = json.dumps(tureObj)
-        if ture[0][2] == Parameters['Player_id']:
+        LastTurn = Person(LastTurn)   
+        if LastTurn.PlayerId == NewTurn['Player_id']:
             print("active player Equal to Player_id")
             return ""
-    sql ="INSERT INTO QueueTabl (idGame, Player_id, tr, td) VALUES (%s, %s, %s, %s)"
-    val = (Parameters['ID'], Parameters['Player_id'],Parameters['tr'], Parameters['td'])
+    sql ="INSERT INTO QueueTabl (idGame, Player_id, tr, td, victory) VALUES (%s, %s, %s, %s, %s)"
+    val = (NewTurn['ID'], NewTurn['Player_id'],NewTurn['tr'], NewTurn['td'], NewTurn['victory'])
     cursor.execute(sql, val)
     mydb.commit()
-    res = make_response(jsonify(Parameters), 200)
-    print("time")
+    res = make_response(jsonify(NewTurn), 200)
     print (time.time() - start_time, 's')
     return res
 
@@ -116,23 +105,21 @@ def NextTurn(GameId):
         password="Bc1b1dc11",
         database="four_in_a_row"
     )
-    start_time = time.time()
     cursor = mydb.cursor()  
     cursor.execute("SELECT * FROM QueueTabl WHERE idGame = %s  ORDER BY ID DESC LIMIT 1;", (GameId ,) )
-    ture = cursor.fetchall()
-    if ture != []:
-        tureObj = {
+    NewTurn = cursor.fetchall()
+    if NewTurn != []:
+        NewTurn = {
             "ID"  : ture[0][0],
             "idGame" : ture[0][1],
             "PlayerId" : ture[0][2],
             "tr" : ture[0][3],
             "td" : ture[0][4]
         }
-        tureObj = json.dumps(tureObj)
-        res = make_response(jsonify(tureObj), 200)    
+        NewTurn = json.dumps(NewTurn)
+        res = make_response(jsonify(NewTurn), 200)    
     else:
         res = make_response(jsonify([]), 200)   
-    print (time.time() - start_time, 's')
     return res
 
 @app.route('/id/<int:GameID>/GameRecovery')
@@ -196,6 +183,14 @@ if __name__ == "__main__":
     app.run(port=4998) 
     # app.run(host ='0.0.0.0') 
 
+class Person:
+    def __init__(self, x):
+        self.ID = x[0][0]
+        self.idGame = x[0][1]
+        self.PlayerId = x[0][2]
+        self.tr = x[0][3]
+        self.td = x[0][4]
+        self.victory = x[0][5]
 
 
 

@@ -65,20 +65,33 @@ showVictory = (Parameters,victoryArray) => {
 
 testErr = (Parameters) => {
     let err = true;
-    if (Parameters.rows > 20 || Parameters.columns > 20) {
+    if(Parameters.rows == "" || Parameters.columns == "" || Parameters.victoryScore == ""){    
+        console.log("1")
+        document.getElementById("fillcells").classList.remove('remove');
+        err = false;
+    }
+    victoryScore = parseInt(Parameters.victoryScore)
+    columns = parseInt(Parameters.columns)
+    rows = parseInt(Parameters.rows)
+    console.log(typeof(victoryScore))
+    console.log(victoryScore)
+    console.log(columns)
+    console.log(rows)
+
+
+    if (rows > 20 || columns > 20) {
+        console.log("2")
         document.getElementById("Row&ColumnLittle20").classList.remove('remove');
         err = false;
     }
-    if (Parameters.rows < 4 || Parameters.columns < 4) {
+    if (rows < 4 || columns < 4) {
+        console.log("3")
         document.getElementById("Row&ColumnBig3").classList.remove('remove');
         err = false;
     }
-    if ((Parameters.columns - Parameters.victoryScore) <= 0 || (Parameters.rows - Parameters.victoryScore) <= 0 || this.victoryScore <= 0) {    
+    if (columns <= victoryScore || rows <= victoryScore || victoryScore <= 3){ 
+        console.log("4")   
         document.getElementById("Winlittle").classList.remove('remove');
-        err = false;
-    }
-    if(Parameters.rows == "" || Parameters.columns == "" || Parameters.victoryScore == ""){    
-        document.getElementById("fillcells").classList.remove('remove');
         err = false;
     }
     return err;
